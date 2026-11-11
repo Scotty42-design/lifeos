@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LIFEOS</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060b18;--sf:#0d1426;--sf2:#131c33;--ink:#eef2ff;--mute:#8a96b8;--line:#1f2a48;--blue:#2f6bff;--blue2:#5b8dff;--ok:#18c8a3;--bad:#ff5d6c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme="light"]{--bg:#f2f5fc;--sf:#fff;--sf2:#eef2fb;--ink:#0a1128;--mute:#5a6684;--line:#dde4f3}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;font-family:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(900px 420px at 85% -10%,rgba(47,107,255,.2),transparent),var(--bg);min-height:100vh}
+h1,h2,h3{margin:0}h3{font-size:1rem;margin-bottom:12px}
+a{color:var(--blue2)}
+.mute,small{color:var(--mute)}
+#app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+#side{position:sticky;top:0;height:100vh;padding:22px 14px;border-right:1px solid var(--line);background:var(--sf);display:flex;flex-direction:column;gap:4px;overflow:auto}
+.logo{font-weight:800;letter-spacing:.08em;font-size:1.3rem;margin:0 8px 18px}.logo b{color:var(--blue)}
+.nl{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;color:var(--mute);text-decoration:none;font-weight:700;font-size:.92rem}
+.nl svg{width:20px;height:20px;flex:none}
+.nl.on{background:var(--blue);color:#fff;box-shadow:0 6px 20px rgba(47,107,255,.35)}
+main{padding:24px 28px 60px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+h1{font-size:1.9rem;font-weight:800;letter-spacing:-.02em}
+#clock{color:var(--mute);font-size:.85rem}
+.view{animation:in .35s ease both}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:14px}
+.stat{background:var(--sf);border:1px solid var(--line);border-radius:16px;padding:14px}
+.stat span,.stat small{display:block;font-size:.78rem;color:var(--mute)}
+.stat b{display:block;font-size:1.5rem;margin:4px 0}
+.hello{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.ring{width:96px;height:96px;flex:none;border-radius:50%;background:conic-gradient(var(--blue) calc(var(--p)*1%),var(--sf2) 0);display:grid;place-items:center;position:relative}
+.ring::before{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--sf)}
+.ring div{position:relative;text-align:center}.ring b{font-size:1.6rem;display:block}.ring small{font-size:.7rem}
+.two{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
+.ch{position:relative;height:230px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}
+label{display:block;font-size:.8rem;color:var(--mute);font-weight:700}
+input,select,textarea{width:100%;margin-top:6px;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--sf2);color:var(--ink);font:inherit}
+input[type=range]{padding:0;accent-color:var(--blue)}
+output{float:right;color:var(--ink)}
+:is(input,select,textarea,button,a):focus-visible{outline:3px solid var(--blue2);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:700;border:0;border-radius:12px;padding:12px 20px;color:#fff;background:linear-gradient(135deg,var(--blue),var(--blue2));cursor:pointer}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.btn:active{transform:scale(.97)}
+.item{display:flex;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border:0}
+.item .t{flex:1;min-width:0}.item .t span{display:block;font-size:.78rem;color:var(--mute);margin-top:2px}
+.ib{font:inherit;font-size:.78rem;font-weight:700;border:1px solid var(--line);background:none;color:var(--ink);border-radius:9px;padding:6px 10px;cursor:pointer}
+.ib.on{background:var(--ok);border-color:var(--ok);color:#04201a}.ib.del{color:var(--bad)}
+.bar{height:8px;border-radius:6px;background:var(--sf2);overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--blue2));border-radius:6px}
+.empty{color:var(--mute);text-align:center;padding:18px 0;margin:0}
+.tabs{display:flex;gap:6px;margin-bottom:14px}.tabs button{font:inherit;font-weight:700;border:1px solid var(--line);background:var(--sf);color:var(--mute);border-radius:10px;padding:8px 16px;cursor:pointer}.tabs .on{background:var(--blue);border-color:var(--blue);color:#fff}
+.calhd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}.cg i{font-style:normal;font-size:.72rem;color:var(--mute)}
+.cg button{font:inherit;position:relative;aspect-ratio:1;border:0;border-radius:10px;background:var(--sf2);color:var(--ink);cursor:pointer}
+.cg .td{outline:2px solid var(--blue)}.cg .sl{background:var(--blue);color:#fff}
+.cg u{position:absolute;bottom:5px;left:50%;width:5px;height:5px;margin-left:-2px;border-radius:50%;background:var(--ok)}
+textarea{height:140px;resize:vertical;font-size:.75rem}
+.plist{margin:0;padding-left:18px;line-height:1.7;color:var(--mute)}
+.err{color:var(--bad);min-height:1.2em;margin:0}
+#auth{min-height:100vh;display:grid;place-items:center;padding:20px}
+.authcard{width:100%;max-width:400px;background:var(--sf);border:1px solid var(--line);border-radius:22px;padding:28px;display:grid;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.authcard .logo{margin:0}.authcard p{margin:0}.fine{font-size:.75rem;color:var(--mute)}
+.focus{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.focus b{font-size:1.6rem;font-variant-numeric:tabular-nums}.focus select{width:auto;margin:0}
+#tour{position:fixed;inset:0;background:rgba(3,6,15,.75);display:grid;place-items:center;padding:20px;z-index:30}.tcard{width:100%;max-width:420px;margin:0}.tcard p{line-height:1.6}.dots{display:flex;gap:6px;margin-bottom:14px}.dots i{width:22px;height:4px;border-radius:2px;background:var(--line)}.dots .on{background:var(--blue)}
+#bar{display:none}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:.85rem;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+#toast.show{opacity:1}
+@media (max-width:860px){
+  #app{display:block}#side{display:none}
+  main{padding:16px 14px calc(96px + env(safe-area-inset-bottom,0px))}
+  #bar{display:flex;position:fixed;left:0;right:0;bottom:0;overflow-x:auto;gap:2px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--sf);border-top:1px solid var(--line);z-index:10}
+  #bar .nl{flex:none;flex-direction:column;gap:3px;padding:8px 10px;font-size:.62rem;box-shadow:none}
+  .two,.grid{grid-template-columns:1fr}
+  h1{font-size:1.5rem}
+}
+@media (prefers-reduced-motion:reduce){.view{animation:none}#toast{transition:none}}
+</style>
+</head>
+<body>
+<div id="auth" hidden></div>
+<div id="app" hidden>
+  <aside id="side"></aside>
+  <main>
+    <header class="top"><h1 id="pt"></h1><span id="clock"></span></header>
+    <div id="view" class="view"></div>
+  </main>
+  <nav id="bar"></nav>
+</div>
+<div id="toast" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+"use strict";
+var $ = function (s) { return document.querySelector(s); };
+var CATS = ["Work", "Education", "Entertainment", "Exercise", "Rest"];
+var MCATS = ["Food", "Transport", "Housing", "Health", "Fun", "Other"];
+var PAL = ["#2f6bff", "#18c8a3", "#f5a524", "#ff5d6c", "#9b8cff", "#5bc0ff"];
+var NAV = [["dashboard", "Dashboard"], ["activities", "My Activities"], ["habits", "Habits"], ["health", "Health"], ["finance", "Finance"], ["goals", "Goals"], ["calendar", "Calendar"], ["reports", "Reports"], ["preferences", "Settings"], ["profile", "Profile"]];
+var ICONS = {
+  dashboard: "M3 3h8v8H3zM13 3h8v5h-8zM13 10h8v11h-8zM3 13h8v8H3z", activities: "M12 7v5l3 2M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+  habits: "M5 12l5 5L20 7", health: "M20.8 5.6a5.5 5.5 0 00-7.8 0L12 6.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 22l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z",
+  finance: "M12 2v20M17 6H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6", goals: "M12 22a10 10 0 100-20 10 10 0 000 20zM12 18a6 6 0 100-12 6 6 0 000 12zM12 14a2 2 0 100-4 2 2 0 000 4z",
+  calendar: "M3 6h18v15H3zM3 10h18M8 3v4M16 3v4", reports: "M4 20V10M10 20V4M16 20v-8M22 20H2",
+  preferences: "M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M14 4v4M8 10v4M16 16v4", profile: "M20 21a8 8 0 10-16 0M12 11a4 4 0 100-8 4 4 0 000 8z"
+};
+var user = null, D = null, charts = [], cm = 0, sel = "";
+var view = $("#view");
+
+/* ---------- helpers ---------- */
+function ico(n) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="' + ICONS[n] + '"/></svg>'; }
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+function ymd(d) { d = d || new Date(); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+function today() { return ymd(); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function load(k, f) { try { var v = localStorage.getItem("lifeos:" + k); return v ? JSON.parse(v) : f; } catch (e) { return f; } }
+function store(k, v) { try { localStorage.setItem("lifeos:" + k, JSON.stringify(v)); } catch (e) {} }
+function sum(a, f) { return a.reduce(function (s, x) { return s + (+f(x) || 0); }, 0); }
+function fmt(n) { return Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 }); }
+function byDate(a, b) { return (b.date || "").localeCompare(a.date || ""); }
+function lastDays(n) { var o = []; for (var i = n - 1; i >= 0; i--) { var d = new Date(); d.setDate(d.getDate() - i); o.push(ymd(d)); } return o; }
+function wd(s) { return new Date(s + "T00:00").toLocaleDateString(undefined, { weekday: "short" }); }
+function stat(l, v, s) { return '<div class="stat"><span>' + l + "</span><b>" + v + "</b><small>" + s + "</small></div>"; }
+function prog(p) { return '<div class="bar"><i style="width:' + Math.max(0, Math.min(100, p)) + '%"></i></div>'; }
+function toast(t) { var e = $("#toast"); e.textContent = t; e.classList.add("show"); setTimeout(function () { e.classList.remove("show"); }, 1500); }
+function save() { store("data:" + user.id, D); }
+function blank() { return { activities: [], habits: [], health: [], money: [], goals: [], events: [], set: { budget: 0, saving: 0 } }; }
+function tap2(b, fn) { var t = b.textContent; b.onclick = function () { if (!b.dataset.c) { b.dataset.c = 1; b.textContent = "Tap again to confirm"; setTimeout(function () { b.dataset.c = ""; b.textContent = t; }, 3000); } else fn(); }; }
+function go(h) { if (location.hash === "#" + h) route(); else location.hash = h; }
+
+/* ---------- theme and charts ---------- */
+function applyTheme() {
+  var t = load("theme", "dark");
+  if (t === "system") t = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  document.documentElement.dataset.theme = t;
+}
+function killCharts() { charts.forEach(function (c) { c.destroy(); }); charts = []; }
+function chart(id, cfg) {
+  var c = $("#" + id); if (!c) return;
+  if (!window.Chart) { c.parentNode.innerHTML = '<p class="empty">Charts need an internet connection.</p>'; return; }
+  var cs = getComputedStyle(document.documentElement);
+  Chart.defaults.color = cs.getPropertyValue("--mute").trim(); Chart.defaults.borderColor = cs.getPropertyValue("--line").trim();
+  Chart.defaults.font.family = "Manrope, system-ui, sans-serif";
+  charts.push(new Chart(c, cfg));
+}
+function opts(legend, scales) { var o = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: !!legend, position: "bottom" } } }; if (scales !== false) o.scales = { y: { beginAtZero: true } }; return o; }
+
+/* ---------- auth ---------- */
+async function hash(pw, salt) {
+  if (!window.crypto || !crypto.subtle) return btoa(unescape(encodeURIComponent(salt + pw)));
+  var h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(salt + pw));
+  return Array.from(new Uint8Array(h)).map(function (x) { return x.toString(16).padStart(2, "0"); }).join("");
+}
+function start(u) {
+  user = u; store("session", u.id);
+  D = Object.assign(blank(), load("data:" + u.id, {})); D.set = Object.assign({ budget: 0, saving: 0 }, D.set);
+  if (D.set.tour === undefined && D.activities.length + D.habits.length + D.health.length + D.money.length + D.goals.length + D.events.length) D.set.tour = 1;
+}
+function showAuth(mode) {
+  $("#app").hidden = true; var a = $("#auth"); a.hidden = false;
+  var su = mode === "signup";
+  a.innerHTML = '<form class="authcard" id="af"><div class="logo">LIFE<b>OS</b></div><h2>' + (su ? "Create your account" : "Welcome back") + '</h2><p class="mute">' + (su ? "Track your time, habits, health, money and goals in one place." : "Log in to see your dashboard.") + "</p>" +
+    (su ? '<label>Name<input name="name" required maxlength="40" autocomplete="name"></label>' : "") +
+    '<label>Email<input name="email" type="email" required autocomplete="email"></label><label>Password<input name="pw" type="password" required minlength="' + (su ? 8 : 1) + '" autocomplete="' + (su ? "new-password" : "current-password") + '"></label>' +
+    '<label><input type="checkbox" id="sp" style="width:auto;margin:0 8px 0 0">Show password</label><button class="btn">' + (su ? "Sign up" : "Log in") + '</button><p class="err" id="ae"></p><p class="mute">' + (su ? 'Have an account? <a href="#login">Log in</a>' : 'New here? <a href="#signup">Create an account</a>') + '</p><p class="fine">Your data stays on this device. LIFEOS only records what you enter, and never uses your location, camera or microphone.</p></form>';
+  $("#sp").onchange = function () { document.querySelector("#af [name=pw]").type = this.checked ? "text" : "password"; };
+  $("#af").onsubmit = async function (e) {
+    e.preventDefault();
+    var f = new FormData(this), email = f.get("email").trim().toLowerCase(), pw = f.get("pw"), users = load("users", []), u = users.filter(function (x) { return x.email === email; })[0];
+    if (su) {
+      if (u) { $("#ae").textContent = "That email already has an account."; return; }
+      var salt = uid(); u = { id: uid(), name: f.get("name").trim(), email: email, salt: salt, hash: await hash(pw, salt), at: today() };
+      users.push(u); store("users", users);
+    } else if (!u || u.hash !== await hash(pw, u.salt)) { $("#ae").textContent = "Wrong email or password."; return; }
+    start(u); go("dashboard");
+  };
+}
+
+/* ---------- generic record manager ---------- */
+function fld(f, v) {
+  if (v === undefined || v === null) v = f.d === "today" ? today() : (f.d === undefined ? "" : f.d);
+  var l = "<label" + (f.w ? ' class="full"' : "") + ">" + f.l;
+  if (f.t === "select") return l + '<select name="' + f.n + '">' + f.o.map(function (o) { return "<option" + (o === v ? " selected" : "") + ">" + o + "</option>"; }).join("") + "</select></label>";
+  if (f.t === "range") return l + "<output>" + v + '%</output><input type="range" name="' + f.n + '" min="0" max="100" step="5" value="' + v + '"></label>';
+  return l + '<input name="' + f.n + '" type="' + (f.t || "text") + '"' + (f.t === "number" ? ' step="any" min="0"' : "") + (f.req === false ? "" : " required") + ' maxlength="80" value="' + esc(v) + '"></label>';
+}
+function crud(key, o) {
+  var edit = null, box = $("#crud");
+  function draw() {
+    var cur = edit && D[key].filter(function (x) { return x.id === edit; })[0], rows = D[key].slice().sort(o.sort || byDate);
+    box.innerHTML = '<form class="card grid" id="f">' + o.fields.map(function (f) { return fld(f, cur ? cur[f.n] : undefined); }).join("") +
+      '<div class="full row"><button class="btn">' + (cur ? "Save changes" : "Add") + "</button>" + (cur ? '<button type="button" class="btn ghost" data-x="1">Cancel</button>' : "") + '</div></form><div class="card">' +
+      (rows.length ? rows.map(function (r) { return '<div class="item"><div class="t">' + o.row(r) + "</div>" + (o.act ? o.act(r) : "") + '<button class="ib" data-e="' + r.id + '">Edit</button><button class="ib del" data-d="' + r.id + '">Delete</button></div>'; }).join("") : '<p class="empty">' + o.empty + "</p>") + "</div>";
+    if (o.after) o.after();
+  }
+  box.onsubmit = function (e) {
+    e.preventDefault();
+    var f = new FormData(e.target), rec = edit ? D[key].filter(function (x) { return x.id === edit; })[0] : { id: uid() };
+    o.fields.forEach(function (fl) { var v = f.get(fl.n); rec[fl.n] = fl.t === "number" || fl.t === "range" ? parseFloat(v) || 0 : String(v).trim(); });
+    if (!edit) { if (o.init) o.init(rec); D[key].push(rec); }
+    edit = null; save(); draw(); toast("Saved");
+  };
+  box.onclick = function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.e) { edit = b.dataset.e; draw(); box.scrollIntoView({ block: "start" }); }
+    else if (b.dataset.x) { edit = null; draw(); }
+    else if (b.dataset.a) { o.on(b.dataset.i); save(); draw(); }
+    else if (b.dataset.d) {
+      if (!b.dataset.c) { b.dataset.c = 1; b.textContent = "Confirm?"; setTimeout(function () { b.dataset.c = ""; b.textContent = "Delete"; }, 2500); return; }
+      D[key] = D[key].filter(function (x) { return x.id !== b.dataset.d; }); save(); draw();
+    }
+  };
+  draw();
+}
+var SHELL = '<div id="sum"></div><div id="crud"></div>';
+
+/* ---------- focus timer, insights, tour ---------- */
+var tmr = null;
+function focusCard() { return '<div class="card focus"><div><h3>Focus timer</h3><small>Start a session and it is logged for you.</small></div><div class="row"><b id="ft">00:00</b><select id="fc"><option>Work</option><option>Education</option></select><button class="btn" id="fb">Start</button></div></div>'; }
+function bindFocus() {
+  var key = "focus:" + user.id; clearInterval(tmr);
+  function paint() {
+    var s = load(key, null); $("#fb").textContent = s ? "Stop and log" : "Start";
+    var sec = s ? Math.floor((Date.now() - s.t) / 1000) : 0, m = Math.floor(sec / 60), r = sec % 60;
+    $("#ft").textContent = (m < 10 ? "0" : "") + m + ":" + (r < 10 ? "0" : "") + r;
+  }
+  var st = load(key, null); if (st) $("#fc").value = st.c;
+  $("#fb").onclick = function () {
+    var s = load(key, null);
+    if (!s) { store(key, { t: Date.now(), c: $("#fc").value }); paint(); return; }
+    var mins = Math.max(1, Math.round((Date.now() - s.t) / 60000));
+    D.activities.push({ id: uid(), title: "Focus session", cat: s.c, mins: mins, date: today() }); save(); store(key, null); toast("Logged " + mins + " min"); vDash();
+  };
+  paint(); tmr = setInterval(paint, 1000);
+}
+function avg(a) { return a.reduce(function (s, x) { return s + x; }, 0) / a.length; }
+function insights() {
+  var o = [], t = today(), mon = t.slice(0, 7), dm = {}, DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  D.activities.forEach(function (a) { dm[a.date] = (dm[a.date] || 0) + a.mins; });
+  var ds = Object.keys(dm);
+  if (ds.length >= 3) {
+    var tot = [0, 0, 0, 0, 0, 0, 0], ct = [0, 0, 0, 0, 0, 0, 0], best = -1, bi = 0;
+    ds.forEach(function (d) { var i = new Date(d + "T00:00").getDay(); tot[i] += dm[d]; ct[i]++; });
+    tot.forEach(function (v, i) { if (ct[i] && v / ct[i] > best) { best = v / ct[i]; bi = i; } });
+    o.push("Your busiest day is " + DAYS[bi] + ", with about " + Math.round(best) + " minutes logged on average.");
+  }
+  var sl = {}, good = [], low = [];
+  D.health.filter(function (h) { return h.type === "Sleep"; }).forEach(function (h) { sl[h.date] = h.val; });
+  Object.keys(sl).forEach(function (d) { (sl[d] >= 7 ? good : low).push(dm[d] || 0); });
+  if (good.length >= 2 && low.length >= 2) o.push("On days with 7 or more hours of sleep logged, you recorded " + Math.round(avg(good)) + " minutes of activity, against " + Math.round(avg(low)) + " on shorter nights.");
+  var bs = D.habits.map(function (h) { return [streak(h), h.name]; }).sort(function (a, b) { return b[0] - a[0]; })[0];
+  if (bs && bs[0] >= 2) o.push("Your longest streak is " + bs[0] + " days: " + esc(bs[1]) + ".");
+  var M = D.money.filter(function (m) { return m.type === "Expense" && m.date.slice(0, 7) === mon; }), total = sum(M, function (m) { return m.amt; });
+  if (total) {
+    var cs = MCATS.map(function (c) { return sum(M.filter(function (m) { return m.cat === c; }), function (m) { return m.amt; }); }), ti = cs.indexOf(Math.max.apply(null, cs));
+    o.push(MCATS[ti] + " is your biggest expense this month, at " + Math.round(cs[ti] / total * 100) + "% of spending.");
+    if (D.set.budget) { var n = new Date(); o.push("You have used " + Math.round(total / D.set.budget * 100) + "% of your budget, and " + Math.round(n.getDate() / new Date(n.getFullYear(), n.getMonth() + 1, 0).getDate() * 100) + "% of the month has passed."); }
+  }
+  return o.slice(0, 4);
+}
+function insightsCard() { var o = insights(); return '<div class="card"><h3>Insights</h3>' + (o.length ? o.map(function (s) { return '<p class="mute" style="margin:0 0 8px">' + s + "</p>"; }).join("") : '<p class="empty">Log a few days of data and your insights appear here.</p>') + "</div>"; }
+function demo() {
+  var d = lastDays(7), a = [[6, "Project work", "Work", 150], [5, "Study session", "Education", 90], [5, "Evening run", "Exercise", 35], [4, "Project work", "Work", 180], [3, "Reading", "Rest", 40], [2, "Project work", "Work", 120], [1, "Gym", "Exercise", 50], [0, "Planning", "Work", 60]];
+  a.forEach(function (x) { D.activities.push({ id: uid(), title: x[1], cat: x[2], mins: x[3], date: d[x[0]], demo: 1 }); });
+  D.habits.push({ id: uid(), name: "Read 15 minutes", target: 5, done: d.slice(2), demo: 1 }, { id: uid(), name: "Walk 20 minutes", target: 4, done: [d[0], d[2], d[4], d[5]], demo: 1 });
+  [7, 6.5, 8, 7.5, 5.5, 7, 7.5].forEach(function (v, i) { D.health.push({ id: uid(), type: "Sleep", val: v, date: d[i], note: "", demo: 1 }); });
+  [6, 8, 5, 7, 8, 6, 4].forEach(function (v, i) { D.health.push({ id: uid(), type: "Water", val: v, date: d[i], note: "", demo: 1 }); });
+  [[6, 30], [4, 45], [1, 50]].forEach(function (x) { D.health.push({ id: uid(), type: "Exercise", val: x[1], date: d[x[0]], note: "", demo: 1 }); });
+  [["Income", "Other", 1800, "Salary"], ["Expense", "Food", 140, "Groceries"], ["Expense", "Transport", 60, "Fuel"], ["Expense", "Fun", 45, "Cinema"], ["Savings", "Other", 200, "Monthly saving"]].forEach(function (x) { D.money.push({ id: uid(), type: x[0], cat: x[1], amt: x[2], date: today(), note: x[3], demo: 1 }); });
+  var due = new Date(); due.setDate(due.getDate() + 14); var tm = new Date(); tm.setDate(tm.getDate() + 1);
+  D.goals.push({ id: uid(), title: "Finish online course", kind: "Short-term", date: ymd(due), prog: 40, note: "Complete module 3", demo: 1 });
+  D.events.push({ id: uid(), title: "Team meeting", kind: "Event", date: ymd(tm), time: "10:00", demo: 1 });
+}
+function tour() {
+  if ($("#tour")) return;
+  var S = [["Welcome to LIFEOS", "One place to see where your time, health, money and goals are going."], ["Log what matters", "Add activities, habits, health records and spending. Everything is optional, and you decide what to record."], ["Stay on track", "Set goals, schedule events, and use Reports to compare this week with the last."], ["Your data is yours", "Everything stays on this device. LIFEOS never uses your location, camera or microphone. Sample data can be removed in Settings."]], i = 0, el = document.createElement("div");
+  el.id = "tour";
+  function paint() {
+    var last = i === S.length - 1;
+    el.innerHTML = '<div class="card tcard"><div class="dots">' + S.map(function (_, k) { return '<i class="' + (k <= i ? "on" : "") + '"></i>'; }).join("") + "</div><h2>" + S[i][0] + '</h2><p class="mute">' + S[i][1] + '</p><div class="row">' + (i ? '<button class="btn ghost" data-t="b">Back</button>' : '<button class="btn ghost" data-t="s">Skip</button>') + (last ? '<button class="btn ghost" data-t="f">Start fresh</button><button class="btn" data-t="d">Load sample data</button>' : '<button class="btn" data-t="n">Next</button>') + "</div></div>";
+  }
+  el.onclick = function (e) {
+    var b = e.target.closest("button"); if (!b) return; var a = b.dataset.t;
+    if (a === "n") i++; else if (a === "b") i--;
+    else { if (a === "d") demo(); D.set.tour = 1; save(); el.remove(); route(); return; }
+    paint();
+  };
+  document.body.appendChild(el); paint();
+}
+
+/* ---------- views ---------- */
+function vDash() {
+  var t = today(), days = lastDays(7), hs = D.habits, hd = hs.filter(function (h) { return h.done.indexOf(t) > -1; }).length;
+  var focus = sum(D.activities.filter(function (a) { return a.date === t && (a.cat === "Work" || a.cat === "Education"); }), function (a) { return a.mins; });
+  var score = Math.round((hs.length ? hd / hs.length : 0) * 50 + Math.min(focus / 240, 1) * 50);
+  var water = sum(D.health.filter(function (h) { return h.date === t && h.type === "Water"; }), function (h) { return h.val; });
+  var sleep = D.health.filter(function (h) { return h.type === "Sleep"; }).sort(byDate)[0];
+  var wk = sum(D.activities.filter(function (a) { return days.indexOf(a.date) > -1; }), function (a) { return a.mins; });
+  var mon = t.slice(0, 7), spent = sum(D.money.filter(function (m) { return m.type === "Expense" && m.date.slice(0, 7) === mon; }), function (m) { return m.amt; });
+  var evs = D.events.filter(function (e) { return e.date === t; }), acts = D.activities.filter(function (a) { return a.date === t; });
+  var hr = new Date().getHours(), g = hr < 12 ? "Good morning" : hr < 18 ? "Good afternoon" : "Good evening";
+  var today_ = evs.map(function (e) { return '<div class="item"><div class="t"><b>' + esc(e.title) + "</b><span>" + e.kind + (e.time ? ", " + e.time : "") + "</span></div></div>"; }).join("") +
+    acts.map(function (a) { return '<div class="item"><div class="t"><b>' + esc(a.title) + "</b><span>" + a.cat + ", " + a.mins + " min</span></div></div>"; }).join("");
+  view.innerHTML = '<section class="card hello"><div><h2>' + g + ", " + esc(user.name.split(" ")[0]) + '</h2><p class="mute">' + (hs.length ? hd + " of " + hs.length + " habits done today." : "Add habits to see your daily progress.") + '</p><small>Score: habits done (50%) plus 4 hours of work or study (50%).</small></div><div class="ring" style="--p:' + score + '"><div><b>' + score + "</b><small>score</small></div></div></section>" + focusCard() +
+    '<div class="stats">' + stat("Tasks today", evs.length, "events and reminders") + stat("Water", water, "of 8 glasses") + stat("Last sleep", sleep ? sleep.val + " h" : "–", "guide: 7 or more") + stat("This week", wk + " min", "of activity") + stat("Spent this month", fmt(spent), D.set.budget ? "of " + fmt(D.set.budget) : "no budget set") + "</div>" +
+    '<div class="two"><div class="card"><h3>Activity, last 7 days</h3><div class="ch"><canvas id="c1"></canvas></div></div><div class="card"><h3>Today</h3>' + (today_ || '<p class="empty">Nothing logged today.</p>') + "</div></div>" + insightsCard();
+  bindFocus();
+  chart("c1", { type: "bar", data: { labels: days.map(wd), datasets: [{ data: days.map(function (d) { return sum(D.activities.filter(function (a) { return a.date === d; }), function (a) { return a.mins; }); }), backgroundColor: PAL[0], borderRadius: 8 }] }, options: opts() });
+}
+
+function vAct() {
+  view.innerHTML = SHELL;
+  crud("activities", {
+    fields: [{ n: "title", l: "Activity", w: 1 }, { n: "cat", l: "Category", t: "select", o: CATS }, { n: "mins", l: "Minutes", t: "number", d: 30 }, { n: "date", l: "Date", t: "date", d: "today" }],
+    row: function (r) { return "<b>" + esc(r.title) + "</b><span>" + r.cat + ", " + r.mins + " min, " + r.date + "</span>"; }, empty: "No activities yet. Log what you did above.",
+    after: function () {
+      var t = today(), by = CATS.map(function (c) { return sum(D.activities.filter(function (a) { return a.date === t && a.cat === c; }), function (a) { return a.mins; }); });
+      $("#sum").innerHTML = '<div class="stats">' + stat("Today", sum(by, function (x) { return x; }) + " min", "all activities") + CATS.slice(0, 4).map(function (c, i) { return stat(c, by[i] + " min", "today"); }).join("") + "</div>";
+    }
+  });
+}
+
+function streak(h) { var n = 0, d = new Date(); if (h.done.indexOf(ymd(d)) < 0) d.setDate(d.getDate() - 1); while (h.done.indexOf(ymd(d)) > -1) { n++; d.setDate(d.getDate() - 1); } return n; }
+function vHab() {
+  view.innerHTML = '<div class="card"><h3>Habit completion, last 7 days</h3><div class="ch"><canvas id="c1"></canvas></div></div>' + SHELL;
+  crud("habits", {
+    fields: [{ n: "name", l: "Habit", w: 1 }, { n: "target", l: "Days per week", t: "number", d: 5 }],
+    sort: function (a, b) { return a.name.localeCompare(b.name); }, init: function (r) { r.done = []; },
+    row: function (r) {
+      var w = lastDays(7).filter(function (d) { return r.done.indexOf(d) > -1; }).length, m = lastDays(30).filter(function (d) { return r.done.indexOf(d) > -1; }).length;
+      return "<b>" + esc(r.name) + "</b><span>Streak " + streak(r) + " days. Week " + w + " of " + r.target + ". Month " + m + " of " + r.target * 4 + "</span>" + prog(w / (r.target || 1) * 100);
+    },
+    act: function (r) { var d = r.done.indexOf(today()) > -1; return '<button class="ib' + (d ? " on" : "") + '" data-a="t" data-i="' + r.id + '">' + (d ? "Done" : "Mark done") + "</button>"; },
+    on: function (id) { var h = D.habits.filter(function (x) { return x.id === id; })[0], i = h.done.indexOf(today()); if (i > -1) h.done.splice(i, 1); else h.done.push(today()); },
+    empty: "No habits yet. Add one above, like Read for 15 minutes.",
+    after: function () {
+      killCharts(); var days = lastDays(7);
+      chart("c1", { type: "bar", data: { labels: days.map(wd), datasets: [{ data: days.map(function (d) { return D.habits.filter(function (h) { return h.done.indexOf(d) > -1; }).length; }), backgroundColor: PAL[1], borderRadius: 8 }] }, options: opts() });
+    }
+  });
+}
+
+var UNIT = { Water: "glasses", Sleep: "hours", Exercise: "min", Wellness: "" };
+function vHealth() {
+  view.innerHTML = SHELL;
+  crud("health", {
+    fields: [{ n: "type", l: "Type", t: "select", o: ["Water", "Sleep", "Exercise", "Wellness"] }, { n: "val", l: "Amount (glasses, hours or minutes)", t: "number", req: false, d: 1 }, { n: "date", l: "Date", t: "date", d: "today" }, { n: "note", l: "Note or wellness goal", req: false }],
+    row: function (r) { return "<b>" + r.type + (r.val ? ": " + r.val + " " + UNIT[r.type] : "") + "</b><span>" + r.date + (r.note ? ", " + esc(r.note) : "") + "</span>"; }, empty: "Nothing logged yet. Record water, sleep or exercise above.",
+    after: function () {
+      var t = today(), w7 = lastDays(7), H = D.health;
+      var water = sum(H.filter(function (h) { return h.date === t && h.type === "Water"; }), function (h) { return h.val; });
+      var sl = H.filter(function (h) { return h.type === "Sleep"; }).sort(byDate)[0];
+      var ex = sum(H.filter(function (h) { return h.type === "Exercise" && w7.indexOf(h.date) > -1; }), function (h) { return h.val; });
+      $("#sum").innerHTML = '<div class="stats">' + stat("Water today", water, "guide: about 8 glasses") + stat("Last sleep", sl ? sl.val + " h" : "–", "guide: 7 or more") + stat("Exercise, 7 days", ex + " min", "guide: 150 to 300 a week") + "</div>" +
+        '<div class="card"><h3>Your wellness summary</h3><p class="mute">' + (H.length ? "You logged " + water + " glasses of water today and " + ex + " minutes of exercise this week" + (sl ? ", and your last sleep was " + sl.val + " hours" : "") + ". Guides are general, not medical advice." : "Log something below and your summary appears here.") + "</p></div>";
+    }
+  });
+}
+
+function vFin() {
+  view.innerHTML = SHELL + '<div class="card"><h3>Budget and savings goal</h3><form id="bf" class="grid"><label>Monthly budget<input name="b" type="number" min="0" step="any" value="' + D.set.budget + '"></label><label>Savings goal<input name="s" type="number" min="0" step="any" value="' + D.set.saving + '"></label><div class="full"><button class="btn">Save targets</button></div></form></div>';
+  $("#bf").onsubmit = function (e) { e.preventDefault(); var f = new FormData(this); D.set.budget = parseFloat(f.get("b")) || 0; D.set.saving = parseFloat(f.get("s")) || 0; save(); toast("Saved"); fin(); };
+  function fin() {
+    var mon = today().slice(0, 7), M = D.money.filter(function (m) { return m.date.slice(0, 7) === mon; });
+    var inc = sum(M.filter(function (m) { return m.type === "Income"; }), function (m) { return m.amt; }), exp = sum(M.filter(function (m) { return m.type === "Expense"; }), function (m) { return m.amt; });
+    var sv = sum(D.money.filter(function (m) { return m.type === "Savings"; }), function (m) { return m.amt; });
+    $("#sum").innerHTML = '<div class="stats">' + stat("Income", fmt(inc), "this month") + stat("Spent", fmt(exp), D.set.budget ? "of " + fmt(D.set.budget) + " budget" : "no budget set") + stat("Balance", fmt(inc - exp), "income minus spending") + stat("Saved", fmt(sv), D.set.saving ? "of " + fmt(D.set.saving) : "no goal set") + "</div>" +
+      '<div class="two"><div class="card"><h3>Spending by category</h3><div class="ch"><canvas id="c1"></canvas></div></div><div class="card"><h3>Progress</h3><small>Budget used</small>' + prog(D.set.budget ? exp / D.set.budget * 100 : 0) + '<br><small>Savings goal</small>' + prog(D.set.saving ? sv / D.set.saving * 100 : 0) + "</div></div>";
+    killCharts(); var cs = MCATS.map(function (c) { return sum(M.filter(function (m) { return m.type === "Expense" && m.cat === c; }), function (m) { return m.amt; }); });
+    chart("c1", { type: "doughnut", data: { labels: MCATS, datasets: [{ data: cs, backgroundColor: PAL, borderWidth: 0 }] }, options: opts(true, false) });
+  }
+  crud("money", {
+    fields: [{ n: "type", l: "Type", t: "select", o: ["Expense", "Income", "Savings"] }, { n: "cat", l: "Category", t: "select", o: MCATS }, { n: "amt", l: "Amount", t: "number" }, { n: "date", l: "Date", t: "date", d: "today" }, { n: "note", l: "Note", req: false, w: 1 }],
+    row: function (r) { return "<b>" + (r.type === "Income" ? "+" : r.type === "Expense" ? "−" : "") + fmt(r.amt) + " " + r.type + "</b><span>" + r.cat + ", " + r.date + (r.note ? ", " + esc(r.note) : "") + "</span>"; }, empty: "No records yet. Add income or an expense above.", after: fin
+  });
+}
+
+function vGoals() {
+  view.innerHTML = SHELL + '<div class="card"><h3>Achievements</h3><div id="ach"></div></div>';
+  crud("goals", {
+    fields: [{ n: "title", l: "Goal", w: 1 }, { n: "kind", l: "Type", t: "select", o: ["Short-term", "Long-term"] }, { n: "date", l: "Deadline", t: "date", req: false }, { n: "prog", l: "Progress", t: "range", d: 0, w: 1 }, { n: "note", l: "Next milestone", req: false, w: 1 }],
+    sort: function (a, b) { return (a.prog >= 100) - (b.prog >= 100) || (a.date || "9").localeCompare(b.date || "9"); },
+    row: function (r) { var late = r.date && r.date < today() && r.prog < 100; return "<b>" + esc(r.title) + "</b><span>" + r.kind + ", " + r.prog + "%" + (r.date ? ", due " + r.date : "") + (late ? ", overdue" : "") + (r.note ? ", next: " + esc(r.note) : "") + "</span>" + prog(r.prog); },
+    empty: "No goals yet. Set one above.",
+    after: function () {
+      var G = D.goals, done = G.filter(function (g) { return g.prog >= 100; });
+      $("#sum").innerHTML = '<div class="stats">' + stat("Active", G.length - done.length, "goals") + stat("Achieved", done.length, "completed") + stat("Average progress", G.length ? Math.round(sum(G, function (g) { return g.prog; }) / G.length) + "%" : "–", "all goals") + "</div>";
+      $("#ach").innerHTML = done.length ? done.map(function (g) { return '<div class="item"><div class="t"><b>' + esc(g.title) + "</b><span>" + g.kind + "</span></div></div>"; }).join("") : '<p class="empty">Finished goals appear here.</p>';
+    }
+  });
+}
+
+function vCal() {
+  sel = sel || today();
+  view.innerHTML = '<div class="two"><div class="card" id="cal"></div><div><div class="card" id="day"></div><div class="card" id="up"></div></div></div>' + SHELL;
+  function draw() {
+    var d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + cm);
+    var y = d.getFullYear(), m = d.getMonth(), n = new Date(y, m + 1, 0).getDate(), t = today();
+    var h = '<div class="calhd"><button class="ib" data-m="-1">Prev</button><b>' + d.toLocaleDateString(undefined, { month: "long", year: "numeric" }) + '</b><button class="ib" data-m="1">Next</button></div><div class="cg">' + ["S", "M", "T", "W", "T", "F", "S"].map(function (x) { return "<i>" + x + "</i>"; }).join("");
+    for (var i = 0; i < d.getDay(); i++) h += "<span></span>";
+    for (var k = 1; k <= n; k++) {
+      var ds = y + "-" + ("0" + (m + 1)).slice(-2) + "-" + ("0" + k).slice(-2), c = D.events.filter(function (e) { return e.date === ds; }).length;
+      h += '<button data-s="' + ds + '" class="' + (ds === t ? "td " : "") + (ds === sel ? "sl" : "") + '">' + k + (c ? "<u></u>" : "") + "</button>";
+    }
+    $("#cal").innerHTML = h + "</div>";
+    var ev = D.events.filter(function (e) { return e.date === sel; }).sort(function (a, b) { return (a.time || "").localeCompare(b.time || ""); });
+    $("#day").innerHTML = "<h3>" + new Date(sel + "T00:00").toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" }) + "</h3>" + (ev.length ? ev.map(function (e) { return '<div class="item"><div class="t"><b>' + esc(e.title) + "</b><span>" + e.kind + (e.time ? ", " + e.time : "") + "</span></div></div>"; }).join("") : '<p class="empty">No events this day.</p>');
+    var up = D.events.filter(function (e) { return e.date >= t; }).sort(function (a, b) { return a.date.localeCompare(b.date) || (a.time || "").localeCompare(b.time || ""); }).slice(0, 5);
+    $("#up").innerHTML = "<h3>Upcoming</h3>" + (up.length ? up.map(function (e) { return '<div class="item"><div class="t"><b>' + esc(e.title) + "</b><span>" + e.kind + ", " + e.date + (e.time ? " " + e.time : "") + "</span></div></div>"; }).join("") : '<p class="empty">Nothing coming up.</p>');
+  }
+  $("#cal").onclick = function (e) { var b = e.target.closest("button"); if (!b) return; if (b.dataset.m) cm += +b.dataset.m; if (b.dataset.s) sel = b.dataset.s; draw(); var di = document.querySelector("#f [name=date]"), ad = document.querySelector("#f .btn"); if (b.dataset.s && di && ad && ad.textContent === "Add") di.value = sel; };
+  crud("events", {
+    fields: [{ n: "title", l: "Title", w: 1 }, { n: "kind", l: "Type", t: "select", o: ["Event", "Reminder", "Deadline"] }, { n: "date", l: "Date", t: "date", d: "today" }, { n: "time", l: "Time", t: "time", req: false }],
+    sort: function (a, b) { return a.date.localeCompare(b.date) || (a.time || "").localeCompare(b.time || ""); },
+    row: function (r) { return "<b>" + esc(r.title) + "</b><span>" + r.kind + ", " + r.date + (r.time ? " " + r.time : "") + "</span>"; }, empty: "No events yet. Schedule one above.", after: draw
+  });
+}
+
+function vRep() {
+  var per = 7;
+  view.innerHTML = '<div class="tabs" id="tb"><button data-p="7" class="on">Week</button><button data-p="30">Month</button></div><div id="rep"></div>';
+  $("#tb").onclick = function (e) { var b = e.target.closest("button"); if (!b) return; per = +b.dataset.p; Array.prototype.forEach.call(this.children, function (x) { x.classList.toggle("on", x === b); }); draw(); };
+  function byCat(days) { return CATS.map(function (c) { return sum(D.activities.filter(function (a) { return days.indexOf(a.date) > -1 && a.cat === c; }), function (a) { return a.mins; }); }); }
+  function draw() {
+    killCharts(); var cur = lastDays(per), prev = lastDays(per * 2).slice(0, per), a = byCat(cur), b = byCat(prev), ta = sum(a, function (x) { return x; }), tb = sum(b, function (x) { return x; });
+    var hd = sum(D.habits, function (h) { return cur.filter(function (d) { return h.done.indexOf(d) > -1; }).length; }), hp = D.habits.length ? Math.round(hd / (D.habits.length * per) * 100) : 0;
+    var M = D.money.filter(function (m) { return cur.indexOf(m.date) > -1 && m.type === "Expense"; }), top = a.indexOf(Math.max.apply(null, a));
+    $("#rep").innerHTML = '<div class="stats">' + stat("Time logged", ta + " min", "last " + per + " days") + stat("Vs previous", tb ? Math.round((ta - tb) / tb * 100) + "%" : "–", tb + " min before") + stat("Habit completion", hp + "%", "of planned days") + stat("Spent", fmt(sum(M, function (m) { return m.amt; })), "last " + per + " days") + "</div>" +
+      '<div class="card"><h3>This period vs previous, by category</h3><div class="ch"><canvas id="c1"></canvas></div></div><div class="two"><div class="card"><h3>Daily minutes</h3><div class="ch"><canvas id="c2"></canvas></div></div><div class="card"><h3>Spending</h3><div class="ch"><canvas id="c3"></canvas></div></div></div>' +
+      '<div class="card"><h3>Summary</h3><p class="mute">' + (ta ? "Most of your time went to " + CATS[top] + " (" + a[top] + " min). " : "No activities logged in this period. ") + (tb ? "That is " + (ta >= tb ? "up" : "down") + " " + Math.abs(Math.round((ta - tb) / tb * 100)) + "% on the previous period." : "") + "</p></div>";
+    chart("c1", { type: "bar", data: { labels: CATS, datasets: [{ label: "This period", data: a, backgroundColor: PAL[0], borderRadius: 6 }, { label: "Previous", data: b, backgroundColor: "#8a96b855", borderRadius: 6 }] }, options: opts(true) });
+    chart("c2", { type: "line", data: { labels: cur.map(function (d) { return per > 7 ? d.slice(5) : wd(d); }), datasets: [{ data: cur.map(function (d) { return sum(D.activities.filter(function (x) { return x.date === d; }), function (x) { return x.mins; }); }), borderColor: PAL[0], backgroundColor: "#2f6bff33", fill: true, tension: .35 }] }, options: opts() });
+    chart("c3", { type: "doughnut", data: { labels: MCATS, datasets: [{ data: MCATS.map(function (c) { return sum(M.filter(function (m) { return m.cat === c; }), function (m) { return m.amt; }); }), backgroundColor: PAL, borderWidth: 0 }] }, options: opts(true, false) });
+  }
+  draw();
+}
+
+function vPref() {
+  var th = load("theme", "dark");
+  view.innerHTML = '<div class="card"><h3>Appearance</h3><div class="tabs" id="th">' + ["dark", "light", "system"].map(function (x) { return '<button data-t="' + x + '"' + (x === th ? ' class="on"' : "") + ">" + x[0].toUpperCase() + x.slice(1) + "</button>"; }).join("") + '</div></div>' +
+    '<div class="card"><h3>Your data</h3><p class="mute">You decide what is recorded. You can delete everything at any time.</p><div class="row"><button class="btn ghost" id="rt">Replay welcome tour</button><button class="btn ghost" id="rd">Remove sample data</button><button class="btn ghost" id="dd">Delete all my data</button><button class="btn ghost" id="da">Delete my account</button></div></div>' +
+    '<div class="card"><h3>Privacy</h3><ul class="plist"><li>LIFEOS only stores what you type in.</li><li>It never uses your location, camera, microphone or device activity.</li><li>Data lives in this browser. A future backend would need encryption, hashed passwords and your consent.</li></ul></div>';
+  $("#th").onclick = function (e) { var b = e.target.closest("button"); if (!b) return; store("theme", b.dataset.t); applyTheme(); vPref(); };
+  $("#rt").onclick = function () { D.set.tour = 0; save(); route(); };
+  $("#rd").onclick = function () { ["activities", "habits", "health", "money", "goals", "events"].forEach(function (k) { D[k] = D[k].filter(function (x) { return !x.demo; }); }); save(); toast("Sample data removed"); };
+  tap2($("#dd"), function () { D = blank(); D.set.tour = 1; save(); toast("All your records were deleted"); vPref(); });
+  tap2($("#da"), function () { store("users", load("users", []).filter(function (u) { return u.id !== user.id; })); try { localStorage.removeItem("lifeos:data:" + user.id); } catch (e) {} logout(); });
+}
+
+function vProf() {
+  var n = D.activities.length + D.habits.length + D.health.length + D.money.length + D.goals.length + D.events.length;
+  view.innerHTML = '<div class="card"><h3>Your profile</h3><form id="pf" class="grid"><label>Name<input name="n" required maxlength="40" value="' + esc(user.name) + '"></label><label>Email<input value="' + esc(user.email) + '" disabled></label><div class="full row"><button class="btn">Save name</button></div></form></div>' +
+    '<div class="stats">' + stat("Member since", user.at, "") + stat("Records", n, "stored on this device") + "</div><button class=\"btn ghost\" id=\"lo\">Log out</button>";
+  $("#pf").onsubmit = function (e) { e.preventDefault(); user.name = new FormData(this).get("n").trim(); var us = load("users", []); us.forEach(function (u) { if (u.id === user.id) u.name = user.name; }); store("users", us); toast("Saved"); };
+  $("#lo").onclick = logout;
+}
+function logout() { user = null; D = null; store("session", null); go("login"); }
+
+/* ---------- router ---------- */
+var VIEWS = { dashboard: vDash, activities: vAct, habits: vHab, health: vHealth, finance: vFin, goals: vGoals, calendar: vCal, reports: vRep, preferences: vPref, profile: vProf };
+function route() {
+  var h = location.hash.slice(1) || "dashboard";
+  if (!user) { showAuth(h === "signup" ? "signup" : "login"); return; }
+  if (!VIEWS[h]) { h = "dashboard"; history.replaceState(null, "", "#dashboard"); }
+  $("#auth").hidden = true; $("#app").hidden = false; killCharts(); clearInterval(tmr);
+  var html = NAV.map(function (n) { return '<a href="#' + n[0] + '" class="nl' + (n[0] === h ? " on" : "") + '">' + ico(n[0]) + "<span>" + n[1] + "</span></a>"; }).join("");
+  $("#side").innerHTML = '<div class="logo">LIFE<b>OS</b></div>' + html; $("#bar").innerHTML = html;
+  $("#pt").textContent = NAV.filter(function (n) { return n[0] === h; })[0][1];
+  var on = $("#bar .on"); if (on) on.scrollIntoView({ inline: "center", block: "nearest" });
+  view.className = ""; void view.offsetWidth; view.className = "view"; view.onclick = null;
+  VIEWS[h](); window.scrollTo(0, 0); if (!D.set.tour) tour();
+}
+view.addEventListener("input", function (e) { if (e.target.type === "range") e.target.previousElementSibling.textContent = e.target.value + "%"; });
+window.addEventListener("hashchange", route);
+function clock() { $("#clock").textContent = new Date().toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); }
+clock(); setInterval(clock, 1000);
+applyTheme();
+(function () { var sid = load("session", null), u = load("users", []).filter(function (x) { return x.id === sid; })[0]; if (u) start(u); route(); })();
+</script>
+</body>
+</html>
